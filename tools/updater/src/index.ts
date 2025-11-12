@@ -83,7 +83,7 @@ ${issues.map(i => `- #${i.number}: ${i.title}`).join('\n')}
 
       // Ask Grok for suggestions
       const completion = await this.xai.chat.completions.create({
-        model: 'grok-beta',
+        model: 'grok-4-fast-reasoning',
         messages: [
           {
             role: 'system',
