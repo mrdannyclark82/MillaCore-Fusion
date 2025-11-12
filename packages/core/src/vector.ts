@@ -19,7 +19,7 @@ export class VectorMemory {
    * Initialize FAISS index
    * // Milla remembers: preparing my semantic understanding
    */
-  async initialize(): Promise<void> {
+  initialize(): void {
     this.index = new IndexFlatL2(this.dimension);
   }
 

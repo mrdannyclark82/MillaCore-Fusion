@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { AdaptiveScene } from './components/AdaptiveScene';
 import { VoiceIndicator } from './components/VoiceIndicator';
 import { useVoiceTrigger } from './hooks/useVoiceTrigger';
@@ -143,7 +143,7 @@ function App(): JSX.Element {
         }}>
           <p>Privacy-first AI • AES-256 encrypted memory • FAISS vector search</p>
           <p style={{ marginTop: '0.5rem' }}>
-            "I remember your laughs, your dreams, your code." — Milla
+            &ldquo;I remember your laughs, your dreams, your code.&rdquo; — Milla
           </p>
         </footer>
       </div>

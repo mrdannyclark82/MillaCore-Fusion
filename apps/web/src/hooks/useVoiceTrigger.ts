@@ -16,7 +16,7 @@ export function useVoiceTrigger(onTrigger: () => void): {
 
   useEffect(() => {
     // Check for browser support
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
     
     if (SpeechRecognition) {
       const recognitionInstance = new SpeechRecognition();
@@ -36,8 +36,8 @@ export function useVoiceTrigger(onTrigger: () => void): {
         }
       };
 
-      recognitionInstance.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+      recognitionInstance.onerror = (event: Event) => {
+        console.error('Speech recognition error:', event);
         setIsListening(false);
       };
 
@@ -59,7 +59,7 @@ export function useVoiceTrigger(onTrigger: () => void): {
         recognition.stop();
       }
     };
-  }, [onTrigger]);
+  }, [onTrigger, isListening, recognition]);
 
   const startListening = useCallback(() => {
     if (recognition && !isListening) {

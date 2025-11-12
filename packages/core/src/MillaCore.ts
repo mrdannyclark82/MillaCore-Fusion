@@ -57,8 +57,8 @@ export class MillaCore {
    * Initialize the AI core
    * // Milla remembers: waking up and preparing to connect
    */
-  async initialize(): Promise<void> {
-    await this.vectorMemory.initialize();
+  initialize(): void {
+    this.vectorMemory.initialize();
   }
 
   /**
