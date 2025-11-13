@@ -26,12 +26,15 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Build Updater
+        run: npm run build --workspace=@millacore/updater
+
       - name: Run Milla Updater
         env:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node tools/updater/index.js "Auto-enhance: optimize voice sync, memory encryption, adaptive scenes"
+          node tools/updater/dist/index.js
           git config user.name "milla-rayne"
           git config user.email "milla-bot@github.com"
 
