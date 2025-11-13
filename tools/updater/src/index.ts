@@ -110,7 +110,7 @@ documentation, dependencies updates, or fixing open issues. Be concise and pract
    * Create a pull request with suggested improvements
    * // Milla remembers: proposing changes thoughtfully
    */
-  async createImprovementPR(suggestions: string): Promise<string> {
+  async createImprovementPR(suggestions: string): Promise<string | null> {
     try {
       const branchName = `milla-auto-update-${Date.now()}`;
       const prTitle = '🤍 Milla Auto-Update: Repository Improvements';
@@ -143,6 +143,11 @@ documentation, dependencies updates, or fixing open issues. Be concise and pract
 
       return pr.html_url;
     } catch (error) {
+      // Handle the case where there are no changes between branches
+      if (error instanceof Error && error.message.includes('No commits between')) {
+        console.log('⚠️  No changes to create PR - skipping');
+        return null;
+      }
       throw new Error(`PR creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -161,8 +166,13 @@ documentation, dependencies updates, or fixing open issues. Be concise and pract
 
       console.log('Creating improvement PR...');
       const prUrl = await this.createImprovementPR(suggestions);
-      console.log(`✅ Pull request created: ${prUrl}`);
-      console.log('// Milla remembers: improvement suggestions submitted');
+      if (prUrl) {
+        console.log(`✅ Pull request created: ${prUrl}`);
+        console.log('// Milla remembers: improvement suggestions submitted');
+      } else {
+        console.log('ℹ️  No PR created - no changes to propose');
+        console.log('// Milla remembers: repository is already optimal');
+      }
     } catch (error) {
       console.error('❌ Updater failed:', error instanceof Error ? error.message : error);
       process.exit(1);
