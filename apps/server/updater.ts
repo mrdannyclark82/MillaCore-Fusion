@@ -23,11 +23,18 @@ async function createPR() {
         });
         console.log(`PR created: ${data.html_url}`);
     } catch (error) {
-        console.error('PR fail:', error.message);
+        if (error instanceof Error) {
+            console.error('PR fail:', error.message);
+        } else {
+            console.error('PR fail:', error);
+        }
     }
 }
 
-createPR();
+(async () => {
+    await createBranchAndCommit();
+    await createPR();
+})();
 
 // For full auto (e.g., commit + push + PR): Expand to create branch, add files via API—complex, but add this func:
 async function createBranchAndCommit() {
