@@ -17,10 +17,27 @@
   ],
   "devDependencies": {
     "turbo": "^1.10.16",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrdannyclark82/MillaCore-Fusion.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mrdannyclark82/MillaCore-Fusion/issues"
+  },
+  "homepage": "https://github.com/mrdannyclark82/MillaCore-Fusion#readme",
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "dotenv": "^17.2.3"
   }
 }
