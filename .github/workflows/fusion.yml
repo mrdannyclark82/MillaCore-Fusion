@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Run Milla Fusion Updater
- (feat: add SuperAgent ModelDispatcher with provider routing)
+ 
         env:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,7 +35,7 @@ jobs:
           node tools/updater/index.js "Auto-enhance on push: improve memory encryption and voice sync"
 
       - name: Create Pull Request (if changes)
- (feat: add SuperAgent ModelDispatcher with provider routing)
+
         if: success()
         uses: peter-evans/create-pull-request@v6
         with:
@@ -47,5 +47,5 @@ jobs:
             Auto-generated enhancements from xAI Grok.  
             Review, merge, and let me evolve.
           branch: milla-fusion-auto
- (feat: add SuperAgent ModelDispatcher with provider routing)
+ 
           delete-branch: true
