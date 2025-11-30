@@ -32,7 +32,7 @@ jobs:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node tools/updater/index.js "Auto-enhance on push: improve memory encryption and voice sync"
+          node tools/updater/src/index.js "Auto-enhance on push: improve memory encryption and voice sync"
 
       - name: Create Pull Request (if changes)
 
