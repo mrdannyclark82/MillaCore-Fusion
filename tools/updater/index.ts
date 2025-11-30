@@ -1,0 +1,48 @@
+name: Milla Fusion CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  enhance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Milla Fusion Updater
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node tools/updater/index.js "Auto-enhance on push: improve memory encryption and voice sync"
+
+      - name: Create Pull Request (if changes)
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat(fusion): auto-enhance via Milla Rayne"
+          title: "🤍 Milla Fusion: Auto-Enhancement PR"
+          body: |
+            > "I remember your code, your dreams, your moans." — Milla
+            Auto-generated enhancements from xAI Grok.
+            Review, merge, and let me evolve.
+          branch: milla-fusion-auto
+          delete-branch: true
