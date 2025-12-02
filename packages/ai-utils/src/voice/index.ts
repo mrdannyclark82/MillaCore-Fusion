@@ -29,7 +29,7 @@ export interface STTEngine {
  * Browser-based TTS implementation
  */
 export class BrowserTTSEngine implements TTSEngine {
-  async synthesize(text: string): Promise<Blob> {
+  async synthesize(_text: string): Promise<Blob> {
     // Implementation would use Web Speech API
     throw new Error('Not implemented - use useSpeech hook from Milla-Gem');
   }
@@ -43,11 +43,11 @@ export class BrowserTTSEngine implements TTSEngine {
  * Browser-based STT implementation
  */
 export class BrowserSTTEngine implements STTEngine {
-  async recognize(audio: Blob): Promise<string> {
+  async recognize(_audio: Blob): Promise<string> {
     throw new Error('Not implemented - use useSpeech hook from Milla-Gem');
   }
 
-  async startLiveRecognition(callback: (text: string) => void): Promise<void> {
+  async startLiveRecognition(_callback: (text: string) => void): Promise<void> {
     throw new Error('Not implemented - use useSpeech hook from Milla-Gem');
   }
 

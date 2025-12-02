@@ -18,12 +18,12 @@ export class OpenAIEmbeddingProvider implements EmbeddingProvider {
 
   constructor(private apiKey: string, private model = 'text-embedding-ada-002') {}
 
-  async embed(text: string): Promise<number[]> {
+  async embed(_text: string): Promise<number[]> {
     // Implementation would call OpenAI API
     throw new Error('Not implemented - integrate with OpenAI SDK');
   }
 
-  async embedBatch(texts: string[]): Promise<number[][]> {
+  async embedBatch(_texts: string[]): Promise<number[][]> {
     // Batch embedding implementation
     throw new Error('Not implemented - integrate with OpenAI SDK');
   }

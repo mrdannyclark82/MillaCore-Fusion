@@ -12,7 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@millacore/common": "workspace:*"
+    "@millacore/common": "*"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",
