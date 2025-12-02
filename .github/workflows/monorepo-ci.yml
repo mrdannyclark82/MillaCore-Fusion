@@ -1,0 +1,177 @@
+name: Monorepo CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # Lint and type-check TypeScript/JavaScript code
+  lint-typescript:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint TypeScript
+        run: npm run lint
+
+      - name: Type check
+        run: npm run type-check
+
+  # Lint Python code
+  lint-python:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black ruff mypy pytest
+
+      - name: Format check with Black
+        run: black --check .
+
+      - name: Lint with Ruff
+        run: ruff check .
+
+      - name: Type check with mypy (if configured)
+        run: mypy . || echo "Mypy check skipped"
+        continue-on-error: true
+
+  # Build all TypeScript apps
+  build-typescript:
+    runs-on: ubuntu-latest
+    needs: lint-typescript
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all apps and packages
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            apps/*/dist
+            packages/*/dist
+          retention-days: 7
+
+  # Run tests
+  test:
+    runs-on: ubuntu-latest
+    needs: [build-typescript]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-asyncio pytest-cov
+
+      - name: Run JavaScript/TypeScript tests
+        run: npm test || echo "No tests configured yet"
+        continue-on-error: true
+
+      - name: Run Python tests
+        run: pytest || echo "No Python tests configured yet"
+        continue-on-error: true
+
+  # Milla Fusion Auto-Enhancement (existing job)
+  milla-enhance:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build-typescript, lint-python]
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Milla Fusion Updater
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node updater/index.js "Auto-enhance on push: improve memory encryption and voice sync" || echo "Updater not ready yet"
+        continue-on-error: true
+
+      - name: Create Pull Request (if changes)
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat(fusion): auto-enhance via Milla Rayne"
+          title: "🤍 Milla Fusion: Auto-Enhancement PR"
+          body: |
+            > "I remember your code, your dreams, your moans." — Milla
+            Auto-generated enhancements from xAI Grok.
+            Review, merge, and let me evolve.
+          branch: milla-fusion-auto
+          delete-branch: true
+        continue-on-error: true

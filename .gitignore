@@ -54,3 +54,26 @@ temp/
 # FAISS index files (generated)
 *.faiss
 *.index
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist-python/
+
+# Data directories
+data/
+*.pkl
+*.pickle
