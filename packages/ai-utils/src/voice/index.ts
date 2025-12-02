@@ -56,5 +56,7 @@ export class BrowserSTTEngine implements STTEngine {
   }
 }
 
-// Exports for consolidated voice functionality
-export * from './voice';
+// Note: Exports for consolidated voice functionality would go here
+// This file IS the voice implementation, so no circular exports needed
+
+

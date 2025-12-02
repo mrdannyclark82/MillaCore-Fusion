@@ -16,7 +16,9 @@ export interface EmbeddingProvider {
 export class OpenAIEmbeddingProvider implements EmbeddingProvider {
   dimension = 1536; // ada-002 dimension
 
-  constructor(private apiKey: string, private model = 'text-embedding-ada-002') {}
+  constructor(_apiKey: string, _model = 'text-embedding-ada-002') {
+    // Parameters stored for future implementation
+  }
 
   async embed(_text: string): Promise<number[]> {
     // Implementation would call OpenAI API

@@ -26,7 +26,7 @@ export async function retry<T>(
     backoffFactor = 2,
   } = options;
 
-  let lastError: Error;
+  let lastError: Error | undefined;
   let delay = initialDelay;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -44,7 +44,10 @@ export async function retry<T>(
     }
   }
 
-  throw lastError!;
+  if (!lastError) {
+    throw new Error('Unexpected: retry loop completed without error');
+  }
+  throw lastError;
 }
 
 /**

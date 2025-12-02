@@ -14,6 +14,17 @@ cd "$REPO_ROOT"
 MILLA_GEM_REF="00b4fc6539267fe8d29b65b188e1ad9d094cbacc"
 RAYNE_GROK_REF="10d2e6e2ee26b62e17159d535edfcf7cb4cd263c"
 
+# Validate commit SHAs format (basic check)
+if ! [[ "$MILLA_GEM_REF" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "Error: Invalid Milla-Gem commit SHA format"
+    exit 1
+fi
+
+if ! [[ "$RAYNE_GROK_REF" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "Error: Invalid RayneGrok commit SHA format"
+    exit 1
+fi
+
 echo "========================================"
 echo "MillaCore-Fusion Monorepo Migration"
 echo "========================================"
@@ -56,9 +67,29 @@ else
     mkdir -p apps/milla-gem
     
     # Copy source files (excluding what's already there)
-    cp -r "$TMP_DIR/milla-gem/components" apps/milla-gem/ || true
-    cp -r "$TMP_DIR/milla-gem/hooks" apps/milla-gem/ || true
-    cp -r "$TMP_DIR/milla-gem/services" apps/milla-gem/ || true
+    if [ -d "$TMP_DIR/milla-gem/components" ]; then
+        cp -r "$TMP_DIR/milla-gem/components" apps/milla-gem/ || {
+            echo "Warning: Failed to copy components directory"
+        }
+    else
+        echo "Warning: components directory not found in source"
+    fi
+    
+    if [ -d "$TMP_DIR/milla-gem/hooks" ]; then
+        cp -r "$TMP_DIR/milla-gem/hooks" apps/milla-gem/ || {
+            echo "Warning: Failed to copy hooks directory"
+        }
+    else
+        echo "Warning: hooks directory not found in source"
+    fi
+    
+    if [ -d "$TMP_DIR/milla-gem/services" ]; then
+        cp -r "$TMP_DIR/milla-gem/services" apps/milla-gem/ || {
+            echo "Warning: Failed to copy services directory"
+        }
+    else
+        echo "Warning: services directory not found in source"
+    fi
     
     echo "✓ Milla-Gem migrated to apps/milla-gem"
 fi

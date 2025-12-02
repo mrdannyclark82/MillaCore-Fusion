@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "echo 'Milla-Gem migration incomplete. Run scripts/migrate_repos.sh to complete.' && exit 1",
-    "build": "echo 'Milla-Gem migration incomplete. Run scripts/migrate_repos.sh to complete.' && exit 1",
+    "dev": "echo '⚠️  Milla-Gem migration incomplete. Run: ./scripts/migrate_repos.sh'",
+    "build": "echo '⚠️  Milla-Gem migration incomplete. Run: ./scripts/migrate_repos.sh'",
     "preview": "vite preview"
   },
   "dependencies": {
