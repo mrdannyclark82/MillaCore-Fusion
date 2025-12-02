@@ -31,7 +31,11 @@ echo "Using tmpdir $TMP"
 
 for repo in "${REPOS[@]}"; do
   echo "Cloning $repo..."
-  git -c http.extraheader="AUTHORIZATION: bearer ${GITHUB_TOKEN:-}" clone --depth 1 "$repo" "$TMP/$(basename "$repo" .git)"
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    git -c http.extraheader="AUTHORIZATION: bearer ${GITHUB_TOKEN}" clone --depth 1 "$repo" "$TMP/$(basename "$repo" .git)"
+  else
+    git clone --depth 1 "$repo" "$TMP/$(basename "$repo" .git)"
+  fi
   SRC="$TMP/$(basename "$repo" .git)"
   DEST="$(target_for_repo "$repo")"
   echo "Copying $SRC -> $DEST"
