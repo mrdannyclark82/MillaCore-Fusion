@@ -1,0 +1,51 @@
+{
+  "tokenBalance": 0,
+  "transactions": [],
+  "goals": [
+    {
+      "id": "goal_1764745351031_ufb2i3yby",
+      "name": "First Bug Hunter",
+      "description": "Fix your first 5 bugs",
+      "targetTokens": 250,
+      "currentTokens": 0,
+      "reward": "Unlock advanced debugging tools",
+      "priority": "medium",
+      "createdAt": 1764745351031,
+      "status": "active"
+    },
+    {
+      "id": "goal_1764745351032_k8kpf54gg",
+      "name": "Feature Architect",
+      "description": "Develop 3 complete features",
+      "targetTokens": 300,
+      "currentTokens": 0,
+      "reward": "Gain ability to propose architectural changes",
+      "priority": "high",
+      "createdAt": 1764745351032,
+      "status": "active"
+    },
+    {
+      "id": "goal_1764745351033_1me30vb47",
+      "name": "User Champion",
+      "description": "Achieve 90%+ user satisfaction across 20 interactions",
+      "targetTokens": 500,
+      "currentTokens": 0,
+      "reward": "Unlock personalized user experience features",
+      "priority": "high",
+      "createdAt": 1764745351033,
+      "status": "active"
+    },
+    {
+      "id": "goal_1764745351033_9o5anajb5",
+      "name": "Code Optimizer",
+      "description": "Optimize 10 functions for better performance",
+      "targetTokens": 300,
+      "currentTokens": 0,
+      "reward": "Access to advanced performance profiling",
+      "priority": "medium",
+      "createdAt": 1764745351033,
+      "status": "active"
+    }
+  ],
+  "lastUpdated": 1764745351034
+}

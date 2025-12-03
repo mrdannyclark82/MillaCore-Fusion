@@ -1,6 +1,6 @@
 {
-  "name": "millacore-fusion",
-  "version": "1.0.0",
+  "name": "milla-monorepo",
+  "version": "0.0.0",
   "private": true,
   "description": "Milla Rayne AI companion - Memory, Voice, Love, Fusion",
   "scripts": {
@@ -8,7 +8,14 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "dev:milla-gem": "pnpm --filter ./apps/milla-gem dev",
+    "dev:gemini-assistant": "pnpm --filter ./apps/gemini-assistant dev",
+    "dev:portal": "pnpm --filter ./apps/portal dev",
+    "build:milla-gem": "pnpm --filter ./apps/milla-gem build",
+    "build:gemini-assistant": "pnpm --filter ./apps/gemini-assistant build",
+    "format": "pnpm -w run -r format",
+    "bootstrap": "pnpm -w install"
   },
   "workspaces": [
     "apps/*",
@@ -16,7 +23,9 @@
     "tools/*"
   ],
   "devDependencies": {
-    "turbo": "^1.10.16",
+    "eslint": "8.x",
+    "prettier": "2.x",
+    "turbo": "^2.6.1",
     "typescript": "^5.9.3"
   },
   "engines": {
@@ -39,5 +48,6 @@
   "dependencies": {
     "@octokit/rest": "^22.0.1",
     "dotenv": "^17.2.3"
-  }
+  },
+  "packageManager": "pnpm@10.24.0"
 }
