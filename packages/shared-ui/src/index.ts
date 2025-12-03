@@ -33,5 +33,12 @@ export {
   type ProcessResponseOptions
 } from './utils/appLogic';
 
+// UI helpers
+export {
+  createMicButtonIcon,
+  createSystemInstructionChangeHandler,
+  createGoogleSearchChangeHandler
+} from './utils/uiHelpers';
+
 // Re-export encoding utilities for convenience in UI code
 export { encode, decode } from '@millacore/shared-utils';
