@@ -3,6 +3,7 @@ import { ChatMessage, MessageSender, ToolCall } from '../types';
 import { GoogleIcon } from './icons/GoogleIcon';
 import { ToolResult } from './ToolResult';
 import { SuggestedAction } from './SuggestedAction';
+import { parseMessageText } from '@millacore/shared-ui';
 
 // Icon components defined directly in the file to avoid creating new files.
 const CopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -46,17 +47,6 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
   );
 };
 
-const parseMessageText = (text: string) => {
-  const parts = text.split(/(```[\s\S]*?```)/g);
-  return parts.map((part, index) => {
-    if (part.startsWith('```')) {
-      const codeContent = part.replace(/```(\w*\n)?|```/g, '').trim();
-      return <CodeBlock key={index} code={codeContent} />;
-    }
-    return <span key={index}>{part}</span>;
-  });
-};
-
 interface MessageProps {
     message: ChatMessage;
     onExecuteAction: (action: ToolCall) => void;
@@ -94,7 +84,7 @@ export const Message: React.FC<MessageProps> = ({ message, onExecuteAction, onCo
                  )}
                  {message.text && (
                     <div className="whitespace-pre-wrap">
-                        {parseMessageText(message.text)}
+                        {parseMessageText(message.text, CodeBlock)}
                         {message.isLive && <span className="inline-block w-0.5 h-4 bg-current ml-1 animate-pulse align-[-2px]" />}
                     </div>
                  )}

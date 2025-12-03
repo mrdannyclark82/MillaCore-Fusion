@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSpeech } from '../hooks/useSpeech';
+import { 
+  createSubmitHandler, 
+  createMicClickHandler, 
+  createImageChangeHandler,
+  createMicButtonIcon 
+} from '@millacore/shared-ui';
 
 interface InputBarProps {
   onSendMessage: (text: string) => void;
@@ -42,41 +48,12 @@ export const InputBar: React.FC<InputBarProps> = ({
     }
   }, [transcript, isListening]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (text.trim() || attachedImage) {
-      onSendMessage(text);
-      setText('');
-      // The parent component (App.tsx) is responsible for setting attachedImage to null after sending
-    }
-  };
+  // Use shared handlers
+  const handleSubmit = createSubmitHandler(text, attachedImage, onSendMessage, setText);
+  const handleMicClick = createMicClickHandler(isConnected, isConnecting, startConversation, stopConversation);
+  const handleImageChange = createImageChangeHandler(setAttachedImage);
+  const MicButtonIcon = () => createMicButtonIcon(isConnected, StopIcon);
 
-  const handleMicClick = () => {
-    if (isConnected) {
-        stopConversation();
-    } else if (!isConnecting) {
-        startConversation();
-    }
-    // Do nothing if it's currently connecting
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAttachedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const MicButtonIcon = () => {
-    if (isConnected) {
-        return <StopIcon className="h-6 w-6" />;
-    }
-    return <span className="material-symbols-outlined">mic</span>;
-  }
 
   return (
     <div>
