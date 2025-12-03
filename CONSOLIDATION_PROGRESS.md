@@ -100,19 +100,21 @@ src/
 |----------|-------|--------------|-----------|
 | Simple utilities | 5 | **5** ✅ | 0 |
 | UI utilities | 1 | **1** ✅ | 0 |
-| Backend functions | 27 | 0 | 27 |
+| Memory utilities | 4 | **4** ✅ | 0 |
+| AI utilities | 3 | **3** ✅ | 0 |
+| Backend functions | 19 | 0 | 19 |
 | UI components | 12 | 0 | 12 |
-| **TOTAL** | **45** | **6** | **39** |
+| **TOTAL** | **45** | **15** | **30** |
 
-**Progress**: 13.3% complete
+**Progress**: 33.3% complete
 
 ---
 
 ## 🚀 Next Steps (Prioritized)
 
-### Phase 1: Simple Backend Utilities (Easy Wins)
-- [ ] Memory service functions (buildSearchIndex, parseCsvLine, parseBackupContent)
-- [ ] AI service helpers (getEmotionalContext, extractRoleCharacter, isRolePlayRequest)
+### Phase 1: Simple Backend Utilities (Easy Wins) ✅ COMPLETE
+- [x] Memory service functions (buildSearchIndex, parseCsvLine, parseBackupContent, isSensitiveContext)
+- [x] AI service helpers (getEmotionalContext, extractRoleCharacter, isRolePlayRequest)
 - [ ] Route helpers (generateImageAnalysisFallback, getIntensityBoost)
 
 ### Phase 2: Complex Route Handlers (Challenging)
