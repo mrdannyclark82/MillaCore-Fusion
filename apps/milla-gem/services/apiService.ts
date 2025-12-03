@@ -19,13 +19,13 @@ const mockToDoList: ToDoList = {
 };
 
 // Simulate a delay to mimic network latency
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { delay, delayWithJitter } from '@millacore/shared-utils';
 
 // isDraft allows us to get a "preview" of the result for confirmation, without actually changing state.
 export const executeTool = async (name: string, args: any, isDraft: boolean = false): Promise<any> => {
   console.log('Executing tool:', name, 'with args:', args);
   if (!isDraft) {
-    await delay(1000 + Math.random() * 1000);
+    await delayWithJitter(1000, 1000);
   }
 
   switch (name) {

@@ -2,16 +2,7 @@ import React from 'react';
 import { ToolCall, GoogleCalendarEvent } from '../types';
 import { CalendarIcon } from './icons/CalendarIcon';
 import { GoogleCalendarIcon } from './icons/GoogleCalendarIcon';
-
-// A helper to format the date/time string from the simulated API response.
-const formatEventTime = (isoString: string): string => {
-    return new Date(isoString).toLocaleString(undefined, {
-        weekday: 'long',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-    });
-};
+import { formatEventTime } from '@millacore/shared-ui';
 
 
 export const MeetingCard: React.FC<{ toolCall: ToolCall }> = ({ toolCall }) => {
