@@ -27,3 +27,11 @@ export {
   extractRoleCharacter,
   isRolePlayRequest
 } from './ai/roleplay';
+
+// Fallback responses
+export {
+  generateImageAnalysisFallback,
+  generateIntelligentFallback,
+  getIntensityBoost,
+  type MessageAnalysis
+} from './fallbacks/responses';
