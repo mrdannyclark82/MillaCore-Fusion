@@ -20,5 +20,18 @@ export {
   type Voice
 } from './utils/componentHandlers';
 
+// App logic handlers
+export {
+  createConfirmToolHandler,
+  createCancelToolHandler,
+  createExecuteToolFromCardHandler,
+  processApiResponse,
+  type ToolCall,
+  type ToolStatus,
+  type ChatMessage,
+  type GroundingSource,
+  type ProcessResponseOptions
+} from './utils/appLogic';
+
 // Re-export encoding utilities for convenience in UI code
 export { encode, decode } from '@millacore/shared-utils';
