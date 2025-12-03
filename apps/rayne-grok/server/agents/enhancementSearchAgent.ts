@@ -1,5 +1,5 @@
 import { Agent } from './base';
-import { glob } from 'glob';
+import glob from 'glob';
 import fs from 'fs/promises';
 
 class EnhancementSearchAgent implements Agent {
