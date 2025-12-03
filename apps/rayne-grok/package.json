@@ -24,6 +24,7 @@
     "docs:watch": "npx typedoc --watch"
   },
   "dependencies": {
+    "@millacore/shared-utils": "workspace:*",
     "@ai-sdk/xai": "^2.0.20",
     "@anthropic-ai/sdk": "^0.68.0",
     "@google/genai": "^1.16.0",
