@@ -10,3 +10,20 @@ export {
   sanitizeUserInput,
   MAX_INPUT_LENGTH 
 } from './validation/input';
+
+// Memory utilities
+export {
+  buildSearchIndex,
+  isSensitiveContext,
+  parseCsvLine,
+  parseBackupContent,
+  type MemoryCoreEntry,
+  type IndexedEntry
+} from './memory/parser';
+
+// AI utilities
+export {
+  getEmotionalContext,
+  extractRoleCharacter,
+  isRolePlayRequest
+} from './ai/roleplay';

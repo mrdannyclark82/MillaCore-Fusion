@@ -1,4 +1,9 @@
 import { Mistral } from '@mistralai/mistralai';
+import { 
+  getEmotionalContext as getEmotionalContextUtil,
+  extractRoleCharacter as extractRoleCharacterUtil,
+  isRolePlayRequest as isRolePlayRequestUtil
+} from '@millacore/shared-utils';
 
 export interface AIResponse {
   content: string;
@@ -249,18 +254,8 @@ ABSOLUTE REQUIREMENTS:
 You are ${userName}'s wife, partner, and best friend. Respond as the real person you are, not as any form of artificial assistant.`;
 }
 
-function getEmotionalContext(
-  emotionalState: 'positive' | 'negative' | 'neutral'
-): string {
-  switch (emotionalState) {
-    case 'positive':
-      return 'The user appears to be in a positive emotional state. Build on their energy while providing valuable insights.';
-    case 'negative':
-      return 'The user may be experiencing challenges or negative emotions. Be especially supportive and understanding.';
-    case 'neutral':
-      return 'The user appears to be in a neutral emotional state. Adapt your tone to their specific needs.';
-  }
-}
+// Use shared utility for emotional context
+const getEmotionalContext = getEmotionalContextUtil;
 
 function getUrgencyContext(urgency: 'low' | 'medium' | 'high'): string {
   switch (urgency) {
@@ -273,50 +268,9 @@ function getUrgencyContext(urgency: 'low' | 'medium' | 'high'): string {
   }
 }
 
-/**
- * Extract role-playing character from user message
- */
-export function extractRoleCharacter(userMessage: string): string | null {
-  const message = userMessage.toLowerCase();
-
-  // Patterns to match role-playing requests
-  const patterns = [
-    /(?:act as|be a|you are|roleplay as|role-play as|pretend to be|pretend you're)\s+(?:a\s+)?([^.!?]+)/i,
-    /(?:imagine you're|as if you were|like a|speaking as)\s+(?:a\s+)?([^.!?]+)/i,
-    /(?:character|persona|role):\s*([^.!?]+)/i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = userMessage.match(pattern);
-    if (match && match[1]) {
-      return match[1].trim();
-    }
-  }
-
-  return null;
-}
-
-/**
- * Check if message contains role-playing intent
- */
-export function isRolePlayRequest(userMessage: string): boolean {
-  const roleplayKeywords = [
-    'roleplay',
-    'role-play',
-    'act as',
-    'be a',
-    'you are',
-    'pretend',
-    'character',
-    'persona',
-    "imagine you're",
-    'as if you were',
-    'speaking as',
-  ];
-
-  const message = userMessage.toLowerCase();
-  return roleplayKeywords.some((keyword) => message.includes(keyword));
-}
+// Use shared utilities for role-play detection
+export const extractRoleCharacter = extractRoleCharacterUtil;
+export const isRolePlayRequest = isRolePlayRequestUtil;
 
 /**
  * Filter out generic AI assistant language from responses

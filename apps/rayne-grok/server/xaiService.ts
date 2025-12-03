@@ -1,8 +1,9 @@
 import OpenAI from 'openai';
 import { config } from './config';
-import axios from 'axios'; // Import the axios library for API calls
+import axios from 'axios';
 import { getMillaPersonaCondensed } from '../shared/millaPersona';
 import { getAllSceneSettings } from '../shared/sceneSettings';
+import { isRolePlayRequest } from '@millacore/shared-utils';
 
 /**
  * Cleans the conversation history of specific looping phrases and internal monologues.
@@ -401,24 +402,5 @@ export function extractRoleCharacter(userMessage: string): string | null {
   return null;
 }
 
-/**
- * Check if message contains role-playing intent
- */
-export function isRolePlayRequest(userMessage: string): boolean {
-  const roleplayKeywords = [
-    'roleplay',
-    'role-play',
-    'act as',
-    'be a',
-    'you are',
-    'pretend',
-    'character',
-    'persona',
-    "imagine you're",
-    'as if you were',
-    'speaking as',
-  ];
-
-  const message = userMessage.toLowerCase();
-  return roleplayKeywords.some((keyword) => message.includes(keyword));
-}
+// Note: isRolePlayRequest is now imported from shared-utils
+export { isRolePlayRequest };
