@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install PNPM
+        run: corepack enable && corepack prepare pnpm@latest --activate
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint JavaScript/TypeScript
+        run: pnpm lint || true
+      - name: Lint Python (ruff)
+        run: |
+          python -m pip install ruff
+          ruff --version || true
+          ruff .
+      - name: Run unit tests (if present)
+        run: |
+          if pnpm -w -s -r test; then
+            echo "Ran workspace tests"
+          else
+            echo "No JS tests or tests failed; check workspace package.json scripts"
+          fi

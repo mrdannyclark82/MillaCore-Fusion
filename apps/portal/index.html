@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Milla Portal</title>
+    <style>
+      body { font-family: system-ui, sans-serif; padding: 2rem; }
+      a { display: block; margin: .5rem 0; }
+      header { margin-bottom: 1.5rem; }
+      .note { color: #666; margin-top: 1rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Milla Monorepo — Portal</h1>
+      <p>Quick links to run frontends locally via docker-compose or pnpm dev scripts.</p>
+    </header>
+    <main>
+      <a href="/milla-gem/" target="_blank">Milla Gem frontend (path: /milla-gem/)</a>
+      <a href="/gemini-assistant/" target="_blank">Gemini Assistant frontend (path: /gemini-assistant/)</a>
+
+      <section class="note">
+        <p>Local dev tips:</p>
+        <ul>
+          <li>Run one frontend locally: <code>pnpm dev:milla-gem</code> or <code>pnpm dev:gemini-assistant</code></li>
+          <li>Run both behind proxy with Docker Compose: <code>docker-compose -f docker-compose.dev.yml up</code></li>
+          <li>Portal dev: <code>pnpm dev:portal</code></li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "apps-portal",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "live-server --port=4000 --watch=.",
+    "build": "echo 'portal is static'"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

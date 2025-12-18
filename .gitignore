@@ -54,3 +54,8 @@ temp/
 # FAISS index files (generated)
 *.faiss
 *.index
+
+# Python
+venv
+__pycache__
+.pytest_cache

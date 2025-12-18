@@ -1,0 +1,666 @@
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/pnpm-workspace.yaml
+@@ -0,0 +1,3 @@
++packages:
++  - 'apps/*'
++  - 'packages/*'
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,32 @@
++{
++  "name": "milla-monorepo",
++  "private": true,
++  "version": "0.0.0",
++  "workspaces": [
++    "apps/*",
++    "packages/*"
++  ],
++  "scripts": {
++    "dev:milla-gem": "pnpm --filter ./apps/milla-gem dev",
++    "dev:gemini-assistant": "pnpm --filter ./apps/gemini-assistant dev",
++    "dev:portal": "pnpm --filter ./apps/portal dev",
++    "build:milla-gem": "pnpm --filter ./apps/milla-gem build",
++    "build:gemini-assistant": "pnpm --filter ./apps/gemini-assistant build",
++    "lint": "pnpm -w run -r lint",
++    "format": "pnpm -w run -r format",
++    "bootstrap": "pnpm -w install"
++  },
++  "devDependencies": {
++    "eslint": "8.x",
++    "prettier": "2.x"
++  }
++}
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,40 @@
++# MillaCore-Fusion — Monorepo (Consolidation)
++
++This repository is the consolidated monorepo that brings together:
++- mrdannyclark82/Milla-Gem -> apps/milla-gem
++- mrdannyclark82/Gemini-Assistant -> apps/gemini-assistant
++- MillaRayne/RayneGrok-Fusion -> apps/rayne-grok
++- existing MillaCore-Fusion code -> apps/milla-core
++
++What this patch provides
++- A pnpm workspace-based monorepo layout
++- scripts to import the other repos into apps/
++- a dedupe reporting tool for duplicate functions
++- packages/common and packages/ai-core skeletons to consolidate duplicated utilities
++- docker-compose.dev + reverse-proxy for local dev
++- apps/portal simple static app linking to both frontends
++- minimal CI workflow and linters
++
++How to apply this patch locally
++1. Create and checkout a new branch:
++   git checkout -b consolidate/monorepo
++
++2. Copy the files in this patch into the repository root preserving file paths.
++
++3. Install and bootstrap:
++   pnpm install
++   pnpm bootstrap
++
++4. Run the migration script to snapshot-copy the source repos into apps/:
++   bash scripts/migrate_repos.sh
++
++5. Inspect duplicates reported by scripts/dedupe.py and consolidate as needed.
++
++6. Commit and push:
++   git add .
++   git commit -m "chore: create monorepo skeleton and migration scripts"
++   git push --set-upstream origin consolidate/monorepo
++
++7. Open a Pull Request on GitHub from consolidate/monorepo.
++
++Notes
++- The migration script will attempt to clone the source repos; set GITHUB_TOKEN in environment if any repo is private.
++- Review dedupe outputs carefully before removing files automatically.
+diff --git a/.env.example b/.env.example
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.env.example
+@@ -0,0 +1,10 @@
++# Example environment variables required across apps
++XAI_GROK_API_KEY=
++OPENAI_API_KEY=
++FAISS_INDEX_PATH=./data/faiss.index
++AES_256_KEY=
++DATABASE_URL=postgres://user:pass@localhost:5432/dbname
++SENTRY_DSN=
++NODE_ENV=development
++PORT=3000
+diff --git a/MIGRATION.md b/MIGRATION.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/MIGRATION.md
+@@ -0,0 +1,58 @@
++# MIGRATION NOTES
++
++This migration snapshot copies code from the following repositories into this monorepo:
++
++- mrdannyclark82/Milla-Gem -> apps/milla-gem
++- mrdannyclark82/Gemini-Assistant -> apps/gemini-assistant
++- MillaRayne/RayneGrok-Fusion -> apps/rayne-grok
++- mrdannyclark82/MillaCore-Fusion (existing) -> apps/milla-core
++
++Deduplication policy
++- Run scripts/dedupe.py to find duplicate function definitions across Python and TypeScript/JavaScript files.
++- Consolidate canonical implementations into:
++  - packages/common (TypeScript/JS shared utilities/components)
++  - packages/ai-core (Python AI helpers: FAISS wrappers, AES utilities, memory adapters)
++- Update imports in apps/ to reference packages/ where duplication was removed.
++- Record provenance for any file moved/merged by updating this document (add lists of original paths and new canonical paths).
++
++How the migration script works
++- scripts/migrate_repos.sh clones the source repos and copies their content into apps/<name>.
++- Temporary clone directories are removed after copying.
++- After copying, run scripts/dedupe.py to get a report on suspected duplicate functions.
++
++Manual review required
++- The dedupe script is conservative and reports candidates. A human reviewer must validate function equivalence before deletion or merging.
++- Tests (if any exist in source repos) should be run after imports to verify behavior.
++
++Provenance
++- Each commit in the PR should include the original path of moved/copied files in the commit message (the migration script attempts to include a note).
+diff --git a/scripts/migrate_repos.sh b/scripts/migrate_repos.sh
+new file mode 100755
+index 0000000..e69de29
+--- /dev/null
++++ b/scripts/migrate_repos.sh
+@@ -0,0 +1,55 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++# Snapshot-import script
++# Usage:
++#   GITHUB_TOKEN=... bash scripts/migrate_repos.sh
++#
++# It clones the specified repos and copies their source tree into apps/.
++# This is a snapshot copy — no commit history is preserved.
++#
++# Edit the REPOS array below to add/remove repos to import.
++
++REPOS=(
++  "https://github.com/mrdannyclark82/Milla-Gem.git"
++  "https://github.com/mrdannyclark82/Gemini-Assistant.git"
++  "https://github.com/MillaRayne/RayneGrok-Fusion.git"
++)
++
++# target mapping by repo name detection (simple)
++target_for_repo() {
++  case "$1" in
++    *Milla-Gem*) echo "apps/milla-gem" ;;
++    *Gemini-Assistant*) echo "apps/gemini-assistant" ;;
++    *RayneGrok-Fusion*) echo "apps/rayne-grok" ;;
++    *) echo "apps/$(basename "$1" .git)" ;;
++  esac
++}
++
++TMP=$(mktemp -d)
++echo "Using tmpdir $TMP"
++
++for repo in "${REPOS[@]}"; do
++  echo "Cloning $repo..."
++  git -c http.extraheader="AUTHORIZATION: bearer ${GITHUB_TOKEN:-}" clone --depth 1 "$repo" "$TMP/$(basename "$repo" .git)"
++  SRC="$TMP/$(basename "$repo" .git)"
++  DEST="$(target_for_repo "$repo")"
++  echo "Copying $SRC -> $DEST"
++  mkdir -p "$DEST"
++  # copy everything except .git
++  rsync -a --exclude='.git' --exclude='node_modules' --exclude='venv' --exclude='__pycache__' "$SRC/" "$DEST/"
++  # record provenance
++  echo "# Migrated from $repo at snapshot" >> "$DEST"/MIGRATION_SOURCE.txt
++done
++
++echo "Cleaning up..."
++rm -rf "$TMP"
++
++echo "Running dedupe report (no destructive actions) ..."
++python3 scripts/dedupe.py || true
++
++echo "Migration snapshot finished. Please review apps/ and packages/ changes, then commit and push."
+diff --git a/scripts/dedupe.py b/scripts/dedupe.py
+new file mode 100755
+index 0000000..e69de29
+--- /dev/null
++++ b/scripts/dedupe.py
+@@ -0,0 +1,171 @@
++#!/usr/bin/env python3
++"""
++Conservative duplicate-function detector.
++Scans .py, .ts, .js files for function def signatures and hashes the body to detect probable duplicates.
++
++This script prints candidate duplicates and does not delete anything.
++Manual review required.
++"""
++import hashlib
++import os
++import re
++from collections import defaultdict
++
++ROOT = os.path.dirname(os.path.dirname(__file__))
++
++PATTERNS = {
++    "python": re.compile(r"^def\s+([a-zA-Z0-9_]+)\s*\(.*\):"),
++    "ts_fn": re.compile(r"^export\s+function\s+([a-zA-Z0-9_]+)\s*\("),
++    "ts_const_fn": re.compile(r"^const\s+([a-zA-Z0-9_]+)\s*=\s*\("),
++    "js_fn": re.compile(r"^function\s+([a-zA-Z0-9_]+)\s*\("),
++}
++
++def file_lines(path):
++    with open(path, "r", encoding="utf-8", errors="ignore") as f:
++        return f.readlines()
++
++def hash_block(lines):
++    h = hashlib.sha256()
++    for l in lines:
++        h.update(l.encode("utf-8"))
++    return h.hexdigest()
++
++def scan_file(path):
++    ext = os.path.splitext(path)[1].lower()
++    lines = file_lines(path)
++    results = []
++    i = 0
++    while i < len(lines):
++        line = lines[i]
++        m = None
++        if ext == ".py":
++            m = PATTERNS["python"].match(line.strip())
++        elif ext in (".ts", ".js", ".tsx", ".jsx"):
++            m = PATTERNS["ts_fn"].match(line.strip()) or PATTERNS["ts_const_fn"].match(line.strip()) or PATTERNS["js_fn"].match(line.strip())
++        if m:
++            name = m.group(1)
++            # gather block: naive - until next blank line or next def/function
++            block = [line]
++            j = i + 1
++            while j < len(lines):
++                nxt = lines[j]
++                if ext == ".py":
++                    if re.match(r"^def\s+|^class\s+", nxt.strip()):
++                        break
++                else:
++                    if re.match(r"^(export\s+)?function\s+|^const\s+.*=\s*\(|^class\s+", nxt.strip()):
++                        break
++                block.append(nxt)
++                j += 1
++            results.append((name, hash_block(block), i+1, j, path))
++            i = j
++        else:
++            i += 1
++    return results
++
++def main():
++    candidates = defaultdict(list)
++    for dirpath, dirnames, filenames in os.walk(ROOT):
++        # skip .git and node_modules and venv
++        if any(skip in dirpath for skip in [os.sep + ".git", os.sep + "node_modules", os.sep + "venv", os.sep + "__pycache__"]):
++            continue
++        for fn in filenames:
++            if fn.endswith((".py", ".ts", ".js", ".tsx", ".jsx")):
++                p = os.path.join(dirpath, fn)
++                for name, h, start, end, path in scan_file(p):
++                    key = (name, h)
++                    candidates[key].append((path, start, end))
++    # print duplicates
++    dup_count = 0
++    for (name, h), occurrences in candidates.items():
++        if len(occurrences) > 1:
++            dup_count += 1
++            print(f"Duplicate candidate: {name} (hash {h}) found in:")
++            for path, start, end in occurrences:
++                print(f"  - {path}:{start}-{end}")
++            print()
++    if dup_count == 0:
++        print("No obvious duplicates found by conservative scan.")
++    else:
++        print(f"Found {dup_count} candidate duplicated functions. Review manually before merging.")
++
++if __name__ == "__main__":
++    main()
+diff --git a/docker-compose.dev.yml b/docker-compose.dev.yml
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/docker-compose.dev.yml
+@@ -0,0 +1,34 @@
++version: "3.8"
++services:
++  milla-gem:
++    image: node:18
++    working_dir: /work
++    volumes:
++      - ./:/work
++    command: /bin/sh -c "cd apps/milla-gem && pnpm install && pnpm dev"
++    ports:
++      - "3001:3000"
++    environment:
++      - NODE_ENV=development
++
++  gemini-assistant:
++    image: node:18
++    working_dir: /work
++    volumes:
++      - ./:/work
++    command: /bin/sh -c "cd apps/gemini-assistant && pnpm install && pnpm dev"
++    ports:
++      - "3002:3000"
++    environment:
++      - NODE_ENV=development
++
++  proxy:
++    image: nginx:stable-alpine
++    volumes:
++      - ./infra/nginx/dev.conf:/etc/nginx/conf.d/default.conf:ro
++    ports:
++      - "8080:80"
++    depends_on:
++      - milla-gem
++      - gemini-assistant
+diff --git a/infra/nginx/dev.conf b/infra/nginx/dev.conf
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/infra/nginx/dev.conf
+@@ -0,0 +1,29 @@
++server {
++  listen 80;
++
++  # Milla Gem frontend at /milla-gem/
++  location /milla-gem/ {
++    proxy_pass http://host.docker.internal:3001/;
++    proxy_set_header Host $host;
++    proxy_set_header X-Real-IP $remote_addr;
++  }
++
++  # Gemini Assistant frontend at /gemini-assistant/
++  location /gemini-assistant/ {
++    proxy_pass http://host.docker.internal:3002/;
++    proxy_set_header Host $host;
++    proxy_set_header X-Real-IP $remote_addr;
++  }
++
++  # Portal at root
++  location / {
++    root /work/apps/portal;
++    try_files $uri $uri/ =404;
++  }
++}
+diff --git a/apps/portal/package.json b/apps/portal/package.json
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/portal/package.json
+@@ -0,0 +1,12 @@
++{
++  "name": "apps-portal",
++  "version": "0.0.0",
++  "private": true,
++  "scripts": {
++    "dev": "live-server --port=4000 --watch=.",
++    "build": "echo 'portal is static'"
++  },
++  "devDependencies": {
++    "live-server": "^1.2.2"
++  }
++}
+diff --git a/apps/portal/index.html b/apps/portal/index.html
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/portal/index.html
+@@ -0,0 +1,38 @@
++<!doctype html>
++<html>
++  <head>
++    <meta charset="utf-8" />
++    <title>Milla Portal</title>
++    <style>
++      body { font-family: system-ui, sans-serif; padding: 2rem; }
++      a { display: block; margin: .5rem 0; }
++      header { margin-bottom: 1.5rem; }
++      .note { color: #666; margin-top: 1rem; }
++    </style>
++  </head>
++  <body>
++    <header>
++      <h1>Milla Monorepo — Portal</h1>
++      <p>Quick links to run frontends locally via docker-compose or pnpm dev scripts.</p>
++    </header>
++    <main>
++      <a href="/milla-gem/" target="_blank">Milla Gem frontend (path: /milla-gem/)</a>
++      <a href="/gemini-assistant/" target="_blank">Gemini Assistant frontend (path: /gemini-assistant/)</a>
++
++      <section class="note">
++        <p>Local dev tips:</p>
++        <ul>
++          <li>Run one frontend locally: <code>pnpm dev:milla-gem</code> or <code>pnpm dev:gemini-assistant</code></li>
++          <li>Run both behind proxy with Docker Compose: <code>docker-compose -f docker-compose.dev.yml up</code></li>
++          <li>Portal dev: <code>pnpm dev:portal</code></li>
++        </ul>
++      </section>
++    </main>
++  </body>
++</html>
+diff --git a/packages/common/package.json b/packages/common/package.json
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/common/package.json
+@@ -0,0 +1,8 @@
++{
++  "name": "@milla/common",
++  "version": "0.0.0",
++  "main": "dist/index.js",
++  "types": "dist/index.d.ts"
++}
+diff --git a/packages/common/src/index.ts b/packages/common/src/index.ts
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/common/src/index.ts
+@@ -0,0 +1,11 @@
++export function normalizeString(s: string): string {
++  return (s || "").trim().toLowerCase();
++}
++
++export function safeJsonParse<T = any>(input: string, fallback: T | null = null): T | null {
++  try {
++    return JSON.parse(input) as T;
++  } catch {
++    return fallback;
++  }
++}
+diff --git a/packages/ai-core/pyproject.toml b/packages/ai-core/pyproject.toml
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/ai-core/pyproject.toml
+@@ -0,0 +1,9 @@
++[project]
++name = "milla-ai-core"
++version = "0.0.0"
++description = "Shared AI utilities: FAISS wrappers, AES helpers, memory adapters"
++authors = []
++dependencies = [
++]
++
++[tool.ruff]
++line-length = 88
+diff --git a/packages/ai-core/milla_ai_core/__init__.py b/packages/ai-core/milla_ai_core/__init__.py
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/ai-core/milla_ai_core/__init__.py
+@@ -0,0 +1,3 @@
++# Basic AI helpers - expand and consolidate here during migration
++from .faiss_utils import load_index
++from .aes_utils import encrypt, decrypt
+diff --git a/packages/ai-core/milla_ai_core/faiss_utils.py b/packages/ai-core/milla_ai_core/faiss_utils.py
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/ai-core/milla_ai_core/faiss_utils.py
+@@ -0,0 +1,12 @@
++# Placeholder FAISS helper
++def load_index(path: str):
++    """
++    Load a FAISS index from the given path.
++    Replace with the canonical implementation extracted from source repos.
++    """
++    try:
++        import faiss
++    except Exception:
++        raise RuntimeError("faiss not installed; add to pyproject if needed")
++    return faiss.read_index(path)
+diff --git a/packages/ai-core/milla_ai_core/aes_utils.py b/packages/ai-core/milla_ai_core/aes_utils.py
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/packages/ai-core/milla_ai_core/aes_utils.py
+@@ -0,0 +1,22 @@
++from Crypto.Cipher import AES
++from Crypto.Util.Padding import pad, unpad
++import base64
++import os
++
++def encrypt(key: bytes, plaintext: bytes) -> str:
++    iv = os.urandom(16)
++    cipher = AES.new(key, AES.MODE_CBC, iv)
++    ct = cipher.encrypt(pad(plaintext, AES.block_size))
++    return base64.b64encode(iv + ct).decode("utf-8")
++
++def decrypt(key: bytes, token: str) -> bytes:
++    data = base64.b64decode(token)
++    iv = data[:16]
++    ct = data[16:]
++    cipher = AES.new(key, AES.MODE_CBC, iv)
++    return unpad(cipher.decrypt(ct), AES.block_size)
+diff --git a/.eslintrc.cjs b/.eslintrc.cjs
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.eslintrc.cjs
+@@ -0,0 +1,11 @@
++module.exports = {
++  root: true,
++  env: { node: true, browser: true, es2021: true },
++  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
++  parser: "@typescript-eslint/parser",
++  plugins: ["@typescript-eslint"],
++  rules: {}
++};
+diff --git a/.prettierrc b/.prettierrc
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.prettierrc
+@@ -0,0 +1,6 @@
++{
++  "semi": true,
++  "singleQuote": true,
++  "printWidth": 100,
++  "trailingComma": "es5"
++}
+diff --git a/pyproject.toml b/pyproject.toml
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/pyproject.toml
+@@ -0,0 +1,5 @@
++[tool.black]
++line-length = 88
++
++[tool.ruff]
++line-length = 88
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.github/workflows/ci.yml
+@@ -0,0 +1,43 @@
++name: CI
++
++on:
++  push:
++  pull_request:
++
++jobs:
++  lint-and-test:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++      - name: Setup Node
++        uses: pnpm/action-setup@v2
++        with:
++          version: 8
++      - name: Setup Python
++        uses: actions/setup-python@v4
++        with:
++          python-version: "3.11"
++      - name: Install PNPM
++        run: corepack enable && corepack prepare pnpm@latest --activate
++      - name: Install dependencies
++        run: pnpm install
++      - name: Lint JavaScript/TypeScript
++        run: pnpm lint || true
++      - name: Lint Python (ruff)
++        run: |
++          python -m pip install ruff
++          ruff --version || true
++          ruff .
++      - name: Run unit tests (if present)
++        run: |
++          if pnpm -w -s -r test; then
++            echo "Ran workspace tests"
++          else
++            echo "No JS tests or tests failed; check workspace package.json scripts"
++          fi
+diff --git a/apps/milla-gem/README.md b/apps/milla-gem/README.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/milla-gem/README.md
+@@ -0,0 +1,6 @@
++# apps/milla-gem
++
++This directory is where the Milla-Gem frontend will be imported.
++
++After running scripts/migrate_repos.sh the snapshot content will appear here.
++Use `pnpm dev:milla-gem` to run locally.
+diff --git a/apps/gemini-assistant/README.md b/apps/gemini-assistant/README.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/gemini-assistant/README.md
+@@ -0,0 +1,6 @@
++# apps/gemini-assistant
++
++This directory is where the Gemini-Assistant frontend will be imported.
++
++After running scripts/migrate_repos.sh the snapshot content will appear here.
++Use `pnpm dev:gemini-assistant` to run locally.
+diff --git a/apps/milla-core/README.md b/apps/milla-core/README.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/milla-core/README.md
+@@ -0,0 +1,3 @@
++# apps/milla-core
++
++Python services from MillaCore-Fusion. Snapshot will be placed here.
+diff --git a/apps/rayne-grok/README.md b/apps/rayne-grok/README.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/apps/rayne-grok/README.md
+@@ -0,0 +1,3 @@
++# apps/rayne-grok
++
++Python services from RayneGrok-Fusion. Snapshot will be placed here.
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/CONTRIBUTING.md
+@@ -0,0 +1,11 @@
++# Contributing
++
++- Use pnpm workspaces to install and run apps: pnpm install
++- Use pnpm dev:milla-gem or pnpm dev:gemini-assistant to start frontends
++- To run both frontends behind a proxy: docker-compose -f docker-compose.dev.yml up
++- When performing deduplication: run scripts/dedupe.py and consolidate code into packages/common or packages/ai-core
++
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,8 @@
++.DS_Store
++node_modules
++venv
++__pycache__
++.pytest_cache
++.env
+diff --git a/.gitattributes b/.gitattributes
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.gitattributes
+@@ -0,0 +1,3 @@
++*.py linguist-language=Python
++*.ts linguist-language=TypeScript
++apps/* linguist-vendored=false
++

@@ -1,0 +1,10 @@
+[project]
+name = "milla-ai-core"
+version = "0.0.0"
+description = "Shared AI utilities: FAISS wrappers, AES helpers, memory adapters"
+authors = []
+dependencies = [
+]
+
+[tool.ruff]
+line-length = 88

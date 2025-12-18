@@ -1,0 +1,7 @@
+{
+  "name": "Gemini Virtual Assistant",
+  "description": "An advanced AI virtual assistant powered by Gemini. It supports voice commands, text input, conversation memory, real-time data access, and coding assistance.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
